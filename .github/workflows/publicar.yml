@@ -1,0 +1,58 @@
+
+name: Publicar EVADEX
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilar Angular
+        run: npm run build -- --base-href=/EVADEX/
+
+      - name: Preparar archivos
+        run: |
+          mkdir -p publicacion
+          cp -a dist/mi-sitio-web/browser/. publicacion/
+          cp publicacion/index.html publicacion/404.html
+          touch publicacion/.nojekyll
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Subir archivos
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: publicacion
+
+      - name: Publicar pagina
+        id: deployment
+        uses: actions/deploy-pages@v4
