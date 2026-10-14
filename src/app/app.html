@@ -1,0 +1,1354 @@
+
+<!-- ========== NUEVO LOGIN PRINCIPAL EVADEX ========== -->
+
+<div class="evadex-login-fondo" *ngIf="loginPendiente">
+
+  <!-- Círculos decorativos -->
+  <div class="evadex-circulo circulo-1"></div>
+  <div class="evadex-circulo circulo-2"></div>
+  <div class="evadex-circulo circulo-3"></div>
+  <div class="evadex-circulo circulo-4"></div>
+
+  <div class="evadex-login-tarjeta">
+
+    <!-- Logo institucional -->
+    <div class="evadex-logo">
+      <img
+        src="/LOGO_UTMACH-removebg-preview.png"
+        alt="Universidad Técnica de Machala"
+      >
+    </div>
+
+    <h1 class="evadex-login-titulo">EVADEX</h1>
+
+    <p class="evadex-login-subtitulo">
+      Sistema de Evaluación de Exposiciones
+    </p>
+
+    <!-- Selección de tipo de usuario -->
+    <div class="evadex-login-opciones">
+
+      <button
+        type="button"
+        [class.activo]="tipoLoginPrincipal === 'estudiante'"
+        (click)="seleccionarTipoLogin('estudiante')">
+        🎓 Estudiante
+      </button>
+
+      <button
+        type="button"
+        [class.activo]="tipoLoginPrincipal === 'docente'"
+        (click)="seleccionarTipoLogin('docente')">
+        👨‍🏫 Docente
+      </button>
+
+    </div>
+
+    <!-- Formulario de acceso -->
+    <form (ngSubmit)="ingresarLoginPrincipal()">
+
+      <div class="evadex-login-campo">
+        <label for="loginUsuario">Usuario</label>
+
+        <input
+          id="loginUsuario"
+          name="usuarioPrincipal"
+          type="text"
+          [(ngModel)]="usuarioLoginPrincipal"
+          [placeholder]="tipoLoginPrincipal === 'docente'
+            ? 'Ingrese su usuario docente'
+            : 'Ingrese su usuario estudiante'"
+          autocomplete="username"
+          required
+        >
+      </div>
+
+      <!-- Seleccionar curso para estudiante -->
+      <div
+        class="evadex-login-campo"
+        *ngIf="tipoLoginPrincipal === 'estudiante'">
+
+        <label for="loginCurso">Curso / Paralelo</label>
+
+        <select
+          id="loginCurso"
+          name="cursoPrincipal"
+          [(ngModel)]="cursoLoginPrincipalId"
+          required>
+
+          <option value="" disabled>
+            Seleccione su curso
+          </option>
+
+          <option
+            *ngFor="let curso of cursos"
+            [value]="curso.id">
+            {{ curso.nombre }} - Paralelo {{ curso.paralelo }}
+          </option>
+
+        </select>
+      </div>
+
+      <div class="evadex-login-campo">
+        <label for="loginClave">Contraseña</label>
+
+        <input
+          id="loginClave"
+          name="clavePrincipal"
+          type="password"
+          [(ngModel)]="claveLoginPrincipal"
+          placeholder="Ingrese su contraseña"
+          autocomplete="current-password"
+          required
+        >
+      </div>
+
+      <!-- Mensaje de error -->
+      <p
+        *ngIf="errorLoginPrincipal"
+        class="evadex-login-error">
+        {{ errorLoginPrincipal }}
+      </p>
+
+      <!-- Iniciar sesión -->
+      <button
+        type="submit"
+        class="evadex-login-boton"
+        [disabled]="procesandoLoginPrincipal">
+
+        {{ procesandoLoginPrincipal
+          ? 'Verificando acceso...'
+          : 'Iniciar sesión' }}
+
+      </button>
+
+    </form>
+
+    <!-- Recuperación de contraseña -->
+    <button
+      type="button"
+      class="evadex-login-recuperar"
+      (click)="recuperarAccesoPrincipal()">
+
+      ¿Olvidaste tu contraseña?
+    </button>
+
+    <p class="evadex-login-universidad">
+      Universidad Técnica de Machala
+    </p>
+
+  </div>
+
+</div>
+
+<!-- ========== FIN DEL NUEVO LOGIN ========== -->
+
+<div style="font-family: system-ui, -apple-system, sans-serif; min-height: 100vh; background: linear-gradient(180deg, #e0f2fe 0%, #f0f9ff 100%); display: flex; flex-direction: column; justify-content: space-between; color: #1e293b;">
+
+  
+<!-- ===== MENÚ LATERAL ESTUDIANTIL EVADEX ===== -->
+
+<ng-container
+  *ngIf="!loginPendiente &&
+  tipoLoginPrincipal === 'estudiante' &&
+  (vistaActual === 'inicio_estudiante' ||
+   vistaActual === 'panel_estudiante' ||
+   vistaActual === 'consulta_notas' ||
+   vistaActual === 'perfil_estudiante')">
+
+  <!-- Botón para abrir el menú en celulares -->
+  <button
+    type="button"
+    class="ev-menu-movil"
+    (click)="menuEstudianteAbierto = !menuEstudianteAbierto">
+    ☰ Menú
+  </button>
+
+  <div
+    class="ev-menu-fondo"
+    *ngIf="menuEstudianteAbierto"
+    (click)="menuEstudianteAbierto = false">
+  </div>
+
+  <aside
+    class="ev-sidebar"
+    [class.ev-sidebar-abierto]="menuEstudianteAbierto">
+
+    <div class="ev-sidebar-perfil">
+      <div class="ev-sidebar-avatar">
+        👤
+      </div>
+
+      <h3>{{ nombrePerfilEstudiante }}</h3>
+
+      <p>
+        {{ cursoEstudianteActivo?.nombre }}
+        - Paralelo {{ cursoEstudianteActivo?.paralelo }}
+      </p>
+
+      <span>Estudiante EVADEX</span>
+    </div>
+
+    <div class="ev-sidebar-separador"></div>
+
+    <nav class="ev-sidebar-navegacion">
+
+      <button
+        type="button"
+        [class.ev-menu-activo]="vistaActual === 'inicio_estudiante'"
+        (click)="abrirSeccionEstudiante('inicio_estudiante')">
+        🏠 Inicio
+      </button>
+
+      <button
+        type="button"
+        [class.ev-menu-activo]="vistaActual === 'panel_estudiante'"
+        (click)="abrirSeccionEstudiante('panel_estudiante')">
+        📝 Coevaluación
+      </button>
+
+      <button
+        type="button"
+        [class.ev-menu-activo]="vistaActual === 'consulta_notas'"
+        (click)="abrirSeccionEstudiante('consulta_notas')">
+        📊 Mis calificaciones
+      </button>
+
+      <button
+        type="button"
+        [class.ev-menu-activo]="vistaActual === 'perfil_estudiante'"
+        (click)="abrirSeccionEstudiante('perfil_estudiante')">
+        👤 Mi perfil
+      </button>
+
+    </nav>
+
+    <button
+      type="button"
+      class="ev-sidebar-salir"
+      (click)="cerrarSesionEstudiantePanel()">
+      🚪 Cerrar sesión
+    </button>
+
+  </aside>
+
+</ng-container>
+
+<!-- ===== FIN MENÚ ESTUDIANTIL ===== -->
+
+  <!-- ==================== PORTAL INICIAL ==================== -->
+  <main *ngIf="vistaActual === 'portal_inicio'" style="flex: 1; max-width: 1080px; width: 100%; margin: 30px auto; padding: 0 20px; box-sizing: border-box;">
+    
+    <!-- Encabezado Institucional -->
+    <div style="background: white; border-radius: 16px; padding: 30px 25px; border: 1px solid #bfdbfe; text-align: center; box-shadow: 0 4px 20px rgba(2, 132, 199, 0.08); margin-bottom: 25px;">
+      <img src="/LOGO_UTMACH-removebg-preview.png" alt="Logo UTMACH" style="height: 85px; width: auto; object-fit: contain; margin-bottom: 12px;">
+      <h1 style="font-size: 1.85rem; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">
+        EVADEX - Sistema de Evaluación de Exposiciones
+      </h1>
+      <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 15px 0;">
+        Universidad Técnica de Machala | Cátedra del Ing. Johnny Paul Novillo Vicuña
+      </p>
+
+      <div style="display: inline-flex; align-items: center; gap: 8px; background: #e0f2fe; color: #0369a1; padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; border: 1px solid #bae6fd;">
+        <span>📅 Periodo oficial activo:</span>
+        <span>{{ hemisemestreActivo === 'hemisemestre_1' ? '1er Hemisemestre' : '2do Hemisemestre' }}</span>
+      </div>
+    </div>
+
+    <!-- Módulos Principales -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 25px;">
+      
+      <!-- TARJETA 1: CONSULTA DE NOTAS -->
+      <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); border: 2px solid #86efac; border-radius: 16px; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 14px rgba(22,101,52,0.08);">
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <div style="font-size: 1.8rem;">📊</div>
+            <h2 style="margin: 0; font-size: 1.25rem; color: #166534; font-weight: 800;">Consulta de Notas</h2>
+          </div>
+          <p style="color: #475569; font-size: 0.88rem; line-height: 1.5; margin: 0 0 15px 0;">
+            Revisa tu desglose de notas oficiales según las rúbricas individuales (Informe, Diapositivas/Cuestionario y Coevaluación de Pares) junto a las observaciones del docente.
+          </p>
+        </div>
+        <button (click)="abrirConsultaNotas()" style="background: #16a34a; color: white; border: none; padding: 12px 18px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(22,163,74,0.25);">
+          <span>🔍 Consultar Mis Calificaciones</span>
+        </button>
+      </div>
+
+      <!-- TARJETA 2: ACCESO DOCENTE -->
+      <div style="background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 14px rgba(30,64,175,0.08);">
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <div style="font-size: 1.8rem;">👨‍🏫</div>
+            <h2 style="margin: 0; font-size: 1.25rem; color: #1e40af; font-weight: 800;">Panel Docente</h2>
+          </div>
+          <p style="color: #475569; font-size: 0.88rem; line-height: 1.5; margin: 0 0 15px 0;">
+            Calificación individual con rúbricas actualizadas (Informes, Diapositivas, Cuestionarios), gestión de estudiantes y reporte formal en PDF.
+          </p>
+        </div>
+        <button (click)="irA('login_docente')" style="background: #1e40af; color: white; border: none; padding: 12px 18px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(30,64,175,0.25);">
+          <span>🔐 Ingresar al Panel Administrativo</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- SECCIÓN DE CURSOS REGISTRADOS -->
+    <div style="background: white; border-radius: 16px; padding: 25px; border: 1px solid #bfdbfe; box-shadow: 0 4px 20px rgba(2, 132, 199, 0.08);">
+      <div style="margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <h2 style="margin: 0; font-size: 1.25rem; color: #0f172a; font-weight: 800;">
+            🎓 Cursos Habilitados para Coevaluación
+          </h2>
+          <span style="font-size: 0.84rem; color: #64748b;">
+            Selecciona tu paralelo para evaluar la exposición y aplicación de cuestionario
+          </span>
+        </div>
+        <span style="font-size: 0.8rem; background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-weight: 700; border: 1px solid #bae6fd;">
+          {{ cursos.length }} Paralelos Habilitados
+        </span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px;">
+        <div *ngFor="let c of cursos" style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; background: #ffffff; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.15s ease, box-shadow 0.15s ease;" onmouseover="this.style.boxShadow='0 6px 18px rgba(2, 132, 199, 0.12)'" onmouseout="this.style.boxShadow='none'">
+          <div>
+            <div style="font-size: 1.4rem; margin-bottom: 6px;">📂</div>
+            <h3 style="margin: 0 0 4px 0; color: #0f172a; font-size: 1rem; font-weight: 700;">{{ c.nombre }}</h3>
+            <span style="display: inline-block; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; margin-bottom: 14px;">
+              Paralelo "{{ c.paralelo }}"
+            </span>
+          </div>
+          <button (click)="abrirLoginEstudiante(c.id)" style="width: 100%; background: #059669; color: white; border: none; padding: 9px; border-radius: 7px; font-weight: 700; cursor: pointer; font-size: 0.88rem;">
+            Entrar a Evaluar →
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==================== CONSULTA DE NOTAS ESTUDIANTE ==================== -->
+  
+
+<main
+  *ngIf="vistaActual === 'consulta_notas'"
+  class="ev-contenido-estudiante"
+  style="flex: 1; max-width: 680px; width: 100%; margin: 25px auto; padding: 0 15px; box-sizing: border-box;">
+
+  <div style="background: white; border-radius: 16px; padding: 30px; border: 1px solid #bfdbfe; box-shadow: 0 4px 20px rgba(2, 132, 199, 0.08);">
+
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h2 style="margin: 0; font-size: 1.3rem; color: #0f172a;">🔍 Consulta Oficial de Calificaciones</h2>
+        <button (click)="irA('portal_inicio')" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.88rem; font-weight: 600;">
+          ← Volver
+        </button>
+      </div>
+      <p style="color: #64748b; font-size: 0.88rem; margin: 0 0 20px 0;">
+        Selecciona tu paralelo y periodo e ingresa tu nombre para consultar tu nota ponderada y retroalimentación docente individual.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px;">
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 700; color: #475569;">Curso / Paralelo:</label>
+          <select [(ngModel)]="cursoConsultaId" style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; margin-top: 4px; font-weight: 600;">
+            <option *ngFor="let c of cursos" [value]="c.id">{{ c.nombre }} - {{ c.paralelo }}</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 700; color: #475569;">Periodo:</label>
+          <select [(ngModel)]="hemiConsulta" style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; margin-top: 4px; font-weight: 600;">
+            <option value="hemisemestre_1">1er Hemisemestre</option>
+            <option value="hemisemestre_2">2do Hemisemestre</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 18px;">
+        <label style="font-size: 0.8rem; font-weight: 700; color: #475569;">Tu Nombre y/o Apellido:</label>
+        <input type="text" [(ngModel)]="nombreConsultaInput" placeholder="Ejemplo: Alejandro Jimenez" (keyup.enter)="buscarNotaEstudiante()" style="width: 100%; padding: 11px; border-radius: 6px; border: 1px solid #cbd5e1; box-sizing: border-box; margin-top: 4px; font-size: 0.95rem;">
+      </div>
+
+      <button (click)="buscarNotaEstudiante()" style="width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 7px; font-weight: 700; cursor: pointer; font-size: 0.95rem;">
+        Buscar Mi Calificación
+      </button>
+
+      <!-- Resultado de Consulta -->
+      <div *ngIf="resultadoConsulta" style="margin-top: 25px; border-top: 2px solid #f1f5f9; padding-top: 20px;">
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 18px; margin-bottom: 15px;">
+          <h3 style="margin: 0 0 4px 0; color: #166534; font-size: 1.25rem;">{{ resultadoConsulta.estudiante.nombre }}</h3>
+          <p style="margin: 0; color: #15803d; font-size: 0.88rem;">
+            {{ resultadoConsulta.grupo.nombre }} | Rol evaluado: <strong>{{ resultadoConsulta.estudiante.rol }}</strong>
+          </p>
+          <div style="font-size: 2.2rem; font-weight: 900; color: #166534; margin: 10px 0 4px 0;">
+            {{ resultadoConsulta.estudiante.notaFinal }} / 100 pts
+          </div>
+          <span style="font-size: 0.85rem; color: #15803d; font-weight: 700;">
+            Puntaje Coevaluación Pares: {{ resultadoConsulta.estudiante.promedioCoevaluacion }} / 30 pts
+          </span>
+        </div>
+
+        <h4 style="margin: 15px 0 8px 0; color: #0f172a; font-size: 0.95rem;">📝 Observaciones del Docente:</h4>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; font-size: 0.88rem; line-height: 1.5;">
+          <p style="margin: 0 0 8px 0;"><strong>Informe:</strong> {{ resultadoConsulta.estudiante.informe?.comentarios || 'Cumple con los requisitos establecidos.' }}</p>
+          <p *ngIf="resultadoConsulta.estudiante.rol === 'Expositor'" style="margin: 0;"><strong>Diapositivas:</strong> {{ resultadoConsulta.estudiante.diapositivas?.comentarios || 'Sin observaciones registradas.' }}</p>
+          <p *ngIf="resultadoConsulta.estudiante.rol === 'Evaluador'" style="margin: 0;"><strong>Cuestionario:</strong> {{ resultadoConsulta.estudiante.cuestionarioDocente?.comentarios || 'Sin observaciones registradas.' }}</p>
+        </div>
+      </div>
+
+      <div *ngIf="consultaRealizada && !resultadoConsulta" style="margin-top: 20px; background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 14px; border-radius: 8px; text-align: center; font-size: 0.9rem;">
+        No se encontró ninguna calificación registrada con ese nombre en este curso y periodo.
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== LOGIN ESTUDIANTE ==================== -->
+  <main *ngIf="vistaActual === 'login_estudiante'" style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div style="max-width: 380px; width: 100%; background: white; padding: 30px; border-radius: 14px; box-shadow: 0 4px 20px rgba(2, 132, 199, 0.1); text-align: center; border: 1px solid #bfdbfe;">
+      <h2 style="margin-top: 0; color: #0f172a;">
+        {{ cursoEstudianteActivo?.nombre }} - Paralelo {{ cursoEstudianteActivo?.paralelo }}
+      </h2>
+      <span style="font-size: 0.82rem; background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 12px; font-weight: 700;">
+        {{ hemisemestreActivo === 'hemisemestre_1' ? '1er Hemisemestre' : '2do Hemisemestre' }}
+      </span>
+      <p style="color: #64748b; font-size: 0.85rem; margin-top: 15px;">Ingresa la contraseña asignada a tu curso</p>
+      
+      <input type="password" [(ngModel)]="claveEstudianteInput" placeholder="Contraseña de curso" (keyup.enter)="iniciarSesionEstudiante()" style="width: 100%; padding: 11px; border: 1px solid #cbd5e1; border-radius: 7px; box-sizing: border-box; margin: 10px 0 10px 0;">
+      <p *ngIf="errorClaveEstudiante" style="color: #dc2626; font-size: 0.85rem; margin-bottom: 10px;">Contraseña incorrecta.</p>
+      
+      <button (click)="iniciarSesionEstudiante()" style="width: 100%; background: #059669; color: white; border: none; padding: 11px; border-radius: 7px; font-weight: 600; cursor: pointer; margin-bottom: 12px;">
+        Acceder al Curso
+      </button>
+      <button (click)="irA('portal_inicio')" style="background: none; border: none; color: #64748b; cursor: pointer; font-size: 0.88rem; text-decoration: underline;">
+        Volver al inicio
+      </button>
+    </div>
+  </main>
+
+  <!-- ==================== LOGIN DOCENTE ==================== -->
+  <main *ngIf="vistaActual === 'login_docente'" style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div style="max-width: 380px; width: 100%; background: white; padding: 30px; border-radius: 14px; box-shadow: 0 4px 20px rgba(2, 132, 199, 0.1); text-align: center; border: 1px solid #bfdbfe;">
+      <h2 style="margin-top: 0;">Panel Docente EVADEX</h2>
+      <p style="color: #64748b; font-size: 0.85rem;">Ing. Johnny Paul Novillo Vicuña</p>
+      <input type="password" [(ngModel)]="claveDocenteInput" placeholder="Contraseña docente" (keyup.enter)="iniciarSesionDocente()" style="width: 100%; padding: 11px; border: 1px solid #cbd5e1; border-radius: 7px; box-sizing: border-box; margin: 15px 0 10px 0;">
+      <p *ngIf="errorClaveDocente" style="color: #dc2626; font-size: 0.85rem; margin-bottom: 10px;">Contraseña incorrecta.</p>
+      <button (click)="iniciarSesionDocente()" style="width: 100%; background: #1e40af; color: white; border: none; padding: 11px; border-radius: 7px; font-weight: 600; cursor: pointer; margin-bottom: 12px;">
+        Entrar al Panel
+      </button>
+      <button (click)="irA('portal_inicio')" style="background: none; border: none; color: #64748b; cursor: pointer; font-size: 0.88rem; text-decoration: underline;">
+        Volver al inicio
+      </button>
+    </div>
+  </main>
+
+  
+<!-- ===== NUEVO MENÚ LATERAL DEL DOCENTE ===== -->
+
+<ng-container *ngIf="vistaActual === 'panel_docente'">
+
+  <button
+    type="button"
+    class="ev-menu-movil"
+    (click)="menuDocenteAbierto = !menuDocenteAbierto">
+    ☰ Menú
+  </button>
+
+  <div
+    class="ev-menu-fondo"
+    *ngIf="menuDocenteAbierto"
+    (click)="menuDocenteAbierto = false">
+  </div>
+
+  <aside
+    class="ev-sidebar ev-sidebar-docente"
+    [class.ev-sidebar-abierto]="menuDocenteAbierto">
+
+    <div class="ev-sidebar-perfil">
+      <div class="ev-sidebar-avatar">👨‍🏫</div>
+
+      <h3>Panel Docente</h3>
+      <p>Ing. Johnny Paul Novillo Vicuña</p>
+      <span>Administrador EVADEX</span>
+    </div>
+
+    <div class="ev-sidebar-separador"></div>
+
+    <nav class="ev-sidebar-navegacion">
+
+      <button
+        type="button"
+        [class.ev-menu-activo]="inicioDocente"
+        (click)="abrirInicioDocente()">
+        🏠 Inicio
+      </button>
+
+      <button
+        type="button"
+        [class.ev-menu-activo]="!inicioDocente && seccionDocente === 'calificar'"
+        (click)="abrirModuloDocente('calificar')">
+        📝 Calificar y Rúbricas
+      </button>
+
+      <button
+        type="button"
+        [class.ev-menu-activo]="!inicioDocente && seccionDocente === 'estudiantes'"
+        (click)="abrirModuloDocente('estudiantes')">
+        👥 Estudiantes y Grupos
+      </button>
+
+      <button
+        type="button"
+        [class.ev-menu-activo]="!inicioDocente && seccionDocente === 'claves'"
+        (click)="abrirModuloDocente('claves')">
+        🔑 Cursos y Claves
+      </button>
+
+      <button
+        type="button"
+        (click)="exportarPDF(); menuDocenteAbierto = false">
+        📄 Generar Reporte PDF
+      </button>
+
+    </nav>
+
+    <button
+      type="button"
+      class="ev-sidebar-salir"
+      (click)="cerrarSesionDocente()">
+      🚪 Cerrar sesión
+    </button>
+
+  </aside>
+
+</ng-container>
+
+<!-- ===== FIN DEL MENÚ DOCENTE ===== -->
+
+  <!-- ==================== PANEL DOCENTE ==================== -->
+ <main
+  *ngIf="vistaActual === 'panel_docente'"
+  class="ev-docente-panel"
+  style="flex: 1; max-width: 1180px; width: 100%; margin: 20px auto; padding: 0 15px; box-sizing: border-box;">
+    
+<!-- ===== INICIO DEL DOCENTE ===== -->
+
+<section *ngIf="inicioDocente" class="ev-inicio-docente">
+
+  <div class="ev-bienvenida">
+    <h1>¡Bienvenido a EVADEX, Docente!</h1>
+    <p>Administre sus evaluaciones, estudiantes y cursos.</p>
+  </div>
+
+  <div class="ev-panel-informacion">
+
+    <div class="ev-tarjeta-info">
+      <span class="ev-icono">📝</span>
+      <h3>Calificar y Rúbricas</h3>
+      <p>Califique las exposiciones con las rúbricas oficiales.</p>
+      <button class="ev-btn-azul"
+        (click)="abrirModuloDocente('calificar')">
+        Ir a calificaciones →
+      </button>
+    </div>
+
+    <div class="ev-tarjeta-info">
+      <span class="ev-icono">👥</span>
+      <h3>Estudiantes y Grupos</h3>
+      <p>Gestione los estudiantes y grupos de cada paralelo.</p>
+      <button class="ev-btn-verde"
+        (click)="abrirModuloDocente('estudiantes')">
+        Administrar estudiantes →
+      </button>
+    </div>
+
+    <div class="ev-tarjeta-info">
+      <span class="ev-icono">🔑</span>
+      <h3>Cursos y Claves</h3>
+      <p>Administre los cursos y las contraseñas.</p>
+      <button class="ev-btn-azul"
+        (click)="abrirModuloDocente('claves')">
+        Administrar cursos →
+      </button>
+    </div>
+
+    <div class="ev-tarjeta-info">
+      <span class="ev-icono">📄</span>
+      <h3>Reportes Académicos</h3>
+      <p>Genere el reporte PDF del curso seleccionado.</p>
+      <button class="ev-btn-azul"
+        (click)="exportarPDF()">
+        Generar reporte →
+      </button>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ===== FIN INICIO DOCENTE ===== -->
+
+    <div
+  class="ev-docente-toolbar"
+  style="background: white; padding: 16px 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #bfdbfe; box-shadow: 0 2px 10px rgba(2, 132, 199, 0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+
+  
+
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        
+        <button
+        class="ev-docente-tab"
+        (click)="seccionDocente = 'calificar'"
+        [style.background]="seccionDocente === 'calificar' ? '#1e40af' : '#f1f5f9'"
+        [style.color]="seccionDocente === 'calificar' ? 'white' : '#334155'"
+        style="border: none; padding: 8px 14px; border-radius: 7px; font-weight: 700; cursor: pointer; font-size: 0.88rem;">
+        📝 Calificar y Rúbricas Oficiales
+      </button>
+        
+      <button
+        class="ev-docente-tab"
+        (click)="seccionDocente = 'estudiantes'"
+        [style.background]="seccionDocente === 'estudiantes' ? '#1e40af' : '#f1f5f9'"
+        [style.color]="seccionDocente === 'estudiantes' ? 'white' : '#334155'"
+        style="border: none; padding: 8px 14px; border-radius: 7px; font-weight: 700; cursor: pointer; font-size: 0.88rem;">
+        👥 Agregar Estudiantes / Grupos
+      </button>
+
+        
+      <button
+        class="ev-docente-tab"
+        (click)="seccionDocente = 'claves'"
+        [style.background]="seccionDocente === 'claves' ? '#1e40af' : '#f1f5f9'"
+        [style.color]="seccionDocente === 'claves' ? 'white' : '#334155'"
+        style="border: none; padding: 8px 14px; border-radius: 7px; font-weight: 700; cursor: pointer; font-size: 0.88rem;">
+        🔑 Cursos y Claves
+      </button>
+
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button class="ev-docente-btn ev-docente-btn-pdf" ...>
+          📄 Generar Reporte PDF
+        </button>
+        <button class="ev-docente-btn ev-docente-btn-salir" ...>
+          Salir
+        </button>
+      </div>
+    </div>
+
+    <div [hidden]="inicioDocente">
+  
+    <!-- Barra de Selección de Curso con ngModelChange -->
+   
+<div
+  class="ev-docente-card ev-docente-barra-curso"
+  style="background: #ffffff; padding: 12px 18px; border-radius: 10px; border: 1px solid #bfdbfe; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.05); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <label style="font-weight: 700; font-size: 0.9rem;">Curso Seleccionado:</label>
+        
+        <select
+  class="ev-docente-select"
+  [(ngModel)]="cursoDocenteSeleccionadoId"
+  (ngModelChange)="alCambiarCursoDocente($event)"
+  style="padding: 7px 12px; font-weight: 700; border-radius: 6px; border: 1px solid #cbd5e1; background: white; cursor: pointer;">
+
+  <option *ngFor="let c of cursos" [value]="c.id">
+    {{ c.nombre }} - Paralelo {{ c.paralelo }}
+  </option>
+
+</select>
+
+        <div style="display: flex; background: #e2e8f0; padding: 2px; border-radius: 6px;">
+          <button (click)="alCambiarHemiDocenteVista('hemisemestre_1')" [style.background]="hemisemestreDocenteVista === 'hemisemestre_1' ? '#2563eb' : 'transparent'" [style.color]="hemisemestreDocenteVista === 'hemisemestre_1' ? 'white' : '#475569'" style="border: none; padding: 6px 10px; border-radius: 5px; font-weight: 700; font-size: 0.8rem; cursor: pointer;">
+            1er Hemi
+          </button>
+          <button (click)="alCambiarHemiDocenteVista('hemisemestre_2')" [style.background]="hemisemestreDocenteVista === 'hemisemestre_2' ? '#2563eb' : 'transparent'" [style.color]="hemisemestreDocenteVista === 'hemisemestre_2' ? 'white' : '#475569'" style="border: none; padding: 6px 10px; border-radius: 5px; font-weight: 700; font-size: 0.8rem; cursor: pointer;">
+            2do Hemi
+          </button>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem;">
+        <span style="color: #64748b;">Periodo para estudiantes:</span>
+        <button (click)="cambiarHemiActivoDocente('hemisemestre_1')" [style.background]="hemisemestreActivo === 'hemisemestre_1' ? '#059669' : 'white'" [style.color]="hemisemestreActivo === 'hemisemestre_1' ? 'white' : '#334155'" style="border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 4px; font-weight: 700; cursor: pointer;">
+          Hemi 1
+        </button>
+        <button (click)="cambiarHemiActivoDocente('hemisemestre_2')" [style.background]="hemisemestreActivo === 'hemisemestre_2' ? '#059669' : 'white'" [style.color]="hemisemestreActivo === 'hemisemestre_2' ? 'white' : '#334155'" style="border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 4px; font-weight: 700; cursor: pointer;">
+          Hemi 2
+        </button>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 1: CALIFICAR Y RÚBRICAS OFICIALES INDIVIDUALES -->
+    <div *ngIf="seccionDocente === 'calificar'">
+      
+      <!-- Selector de Grupo Principal -->
+      <div style="background: white; padding: 16px 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #bfdbfe; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.05); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <label style="font-weight: 700; font-size: 1rem; color: #0f172a;">Grupo a Calificar:</label>
+          <select [(ngModel)]="grupoDocenteId" (ngModelChange)="alCambiarGrupoDocente($event)" style="padding: 8px 14px; border-radius: 6px; border: 2px solid #3b82f6; font-weight: 700; font-size: 0.95rem; cursor: pointer; background: #eff6ff; color: #1e40af;">
+            <option *ngFor="let g of gruposCursoActual" [value]="g.id">{{ g.nombre }}</option>
+          </select>
+        </div>
+        <span *ngIf="gruposCursoActual.length === 0" style="color: #dc2626; font-size: 0.88rem; font-weight: 600;">
+          No hay grupos creados en este curso. Ve a la pestaña "Agregar Estudiantes / Grupos".
+        </span>
+      </div>
+
+      <!-- FORMULARIO DE CALIFICACIÓN INDIVIDUAL -->
+      <div *ngIf="grupoSeleccionadoDocente" style="background: white; padding: 22px; border-radius: 12px; margin-bottom: 25px; border: 1px solid #bfdbfe; box-shadow: 0 2px 10px rgba(2, 132, 199, 0.05);">
+        
+        <!-- Indicador de Estudiante Seleccionado -->
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 14px 18px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <span style="font-size: 0.78rem; text-transform: uppercase; font-weight: 800; color: #15803d; letter-spacing: 0.5px;">Calificando individualmente a:</span>
+            <div *ngIf="estudianteSeleccionadoDocente" style="font-size: 1.2rem; font-weight: 800; color: #166534; margin-top: 2px;">
+              👤 {{ estudianteSeleccionadoDocente.nombre }}
+              <span [style.background]="estudianteSeleccionadoDocente.rol === 'Expositor' ? '#dcfce7' : '#fef3c7'" [style.color]="estudianteSeleccionadoDocente.rol === 'Expositor' ? '#166534' : '#b45309'" style="font-size: 0.8rem; padding: 2px 8px; border-radius: 6px; margin-left: 8px; font-weight: 700;">
+                {{ estudianteSeleccionadoDocente.rol }} {{ estudianteSeleccionadoDocente.esLider ? ' (Líder)' : '' }}
+              </span>
+            </div>
+            <div *ngIf="!estudianteSeleccionadoDocente" style="color: #dc2626; font-weight: 600; font-size: 0.95rem; margin-top: 2px;">
+              Selecciona un estudiante de la tabla de abajo para calificarlo.
+            </div>
+          </div>
+
+          <div *ngIf="estudianteSeleccionadoDocente" style="text-align: right;">
+            <span style="font-size: 0.78rem; color: #15803d; font-weight: 600;">Nota Actual:</span>
+            <div style="font-size: 1.4rem; font-weight: 900; color: #166534;">
+              {{ estudianteSeleccionadoDocente.notaFinal }} / 100
+            </div>
+          </div>
+        </div>
+
+        <!-- Campos de Rúbricas Adaptables según Rol -->
+        <div *ngIf="estudianteSeleccionadoDocente" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 18px;">
+          
+          <!-- 1. INFORME (30 PTS INDIVIDUAL) -->
+          <div style="background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px solid #cbd5e1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <h4 style="margin: 0; color: #0f172a; font-size: 1rem;">📄 Informe Escrito</h4>
+              <span style="font-size: 0.78rem; font-weight: 700; background: #e2e8f0; color: #334155; padding: 2px 8px; border-radius: 4px;">Individual (30 pts)</span>
+            </div>
+
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 2px;">Cumple con formato estándar (15 pts):</label>
+            <select [(ngModel)]="docenteInformeFormato" style="width: 100%; padding: 7px; margin-bottom: 8px; border-radius: 5px; border: 1px solid #cbd5e1; background: white;">
+              <option [ngValue]="null" disabled>-- Selecciona puntaje --</option>
+              <option [value]="15">Siempre (15 pts)</option>
+              <option [value]="10">Frecuentemente (10 pts)</option>
+              <option [value]="5">A veces (5 pts)</option>
+              <option [value]="0">Nunca (0 pts)</option>
+            </select>
+            <p style="font-size: 0.73rem; color: #64748b; margin: -4px 0 8px 0; line-height: 1.3;">
+              Contextualizar carátula, capturas completas de fuentes y criterios personales sin desarrollo exclusivo de IA.
+            </p>
+
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 2px;">Referencias bibliográficas (15 pts):</label>
+            <select [(ngModel)]="docenteInformeReferencias" style="width: 100%; padding: 7px; margin-bottom: 8px; border-radius: 5px; border: 1px solid #cbd5e1; background: white;">
+              <option [ngValue]="null" disabled>-- Selecciona puntaje --</option>
+              <option [value]="15">Al menos 2 libros sílabo o biblioteca UTMACH (15 pts)</option>
+              <option [value]="10">Al menos 1 libro sílabo o biblioteca UTMACH (10 pts)</option>
+              <option [value]="5">Mayoritariamente páginas web (5 pts)</option>
+              <option [value]="0">No presenta (0 pts)</option>
+            </select>
+            <p style="font-size: 0.73rem; color: #64748b; margin: -4px 0 10px 0;">
+              Debe utilizar norma IEEE para referenciar.
+            </p>
+
+            <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #1e40af; margin-bottom: 2px;">Observación / Comentario:</label>
+            <textarea [(ngModel)]="docenteInformeComentarios" rows="2" placeholder="Retroalimentación individual sobre el informe..." style="width: 100%; padding: 7px; border-radius: 5px; border: 1px solid #cbd5e1; box-sizing: border-box; font-size: 0.82rem;"></textarea>
+          </div>
+
+          <!-- 2. DIAPOSITIVAS (40 PTS SOLO SI ES EXPOSITOR) -->
+          <div *ngIf="estudianteSeleccionadoDocente.rol === 'Expositor'" style="background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px solid #bbf7d0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <h4 style="margin: 0; color: #0f172a; font-size: 1rem;">🖥️ Diapositivas</h4>
+              <span style="font-size: 0.78rem; font-weight: 700; background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 4px;">Expositor (40 pts)</span>
+            </div>
+
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 2px;">Formato estándar (15 pts):</label>
+            <select [(ngModel)]="docenteDiapositivasFormato" style="width: 100%; padding: 7px; margin-bottom: 6px; border-radius: 5px; border: 1px solid #cbd5e1; background: white;">
+              <option [ngValue]="null" disabled>-- Selecciona puntaje --</option>
+              <option [value]="15">Siempre (15 pts)</option>
+              <option [value]="10">Frecuentemente (10 pts)</option>
+              <option [value]="5">A veces (5 pts)</option>
+              <option [value]="0">Nunca (0 pts)</option>
+            </select>
+            <p style="font-size: 0.73rem; color: #64748b; margin: -2px 0 8px 0; line-height: 1.3;">
+              Plantilla docente, máx 5 diapositivas p/p, transiciones de ejercicios y simulador de ser necesario.
+            </p>
+
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 2px;">Contiene información pertinente al tema (15 pts):</label>
+            <select [(ngModel)]="docenteDiapositivasPertinencia" style="width: 100%; padding: 7px; margin-bottom: 6px; border-radius: 5px; border: 1px solid #cbd5e1; background: white;">
+              <option [ngValue]="null" disabled>-- Selecciona puntaje --</option>
+              <option [value]="15">Siempre (15 pts)</option>
+              <option [value]="10">Frecuentemente (10 pts)</option>
+              <option [value]="5">A veces (5 pts)</option>
+              <option [value]="0">Nunca (0 pts)</option>
+            </select>
+            <p style="font-size: 0.73rem; color: #64748b; margin: -2px 0 8px 0;">
+              Contenidos acordes al sílabo e investigación bibliográfica ampliada.
+            </p>
+
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 2px;">Referencias bibliográficas en diapositivas (10 pts):</label>
+            <select [(ngModel)]="docenteDiapositivasReferencias" style="width: 100%; padding: 7px; margin-bottom: 8px; border-radius: 5px; border: 1px solid #cbd5e1; background: white;">
+              <option [ngValue]="null" disabled>-- Selecciona puntaje --</option>
+              <option [value]="10">Siempre corresponden a información del marco teórico (10 pts)</option>
+              <option [value]="5">A veces corresponden a información del marco teórico (5 pts)</option>
+              <option [value]="0">No corresponden a información del marco teórico o no presenta (0 pts)</option>
+            </select>
+
+            <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #1e40af; margin-bottom: 2px;">Observación / Comentario:</label>
+            <textarea [(ngModel)]="docenteDiapositivasComentarios" rows="2" placeholder="Motivo o sugerencias sobre sus diapositivas..." style="width: 100%; padding: 7px; border-radius: 5px; border: 1px solid #cbd5e1; box-sizing: border-box; font-size: 0.82rem;"></textarea>
+          </div>
+
+          <!-- 3. CUESTIONARIO (40 PTS SOLO SI ES EVALUADOR) -->
+          <div *ngIf="estudianteSeleccionadoDocente.rol === 'Evaluador'" style="background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px solid #fde68a;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <h4 style="margin: 0; color: #0f172a; font-size: 1rem;">📋 Cuestionario</h4>
+              <span style="font-size: 0.78rem; font-weight: 700; background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 4px;">Evaluador (40 pts)</span>
+            </div>
+
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 2px;">Referencia las preguntas (20 pts):</label>
+            <select [(ngModel)]="docenteCuestionarioReferencia" style="width: 100%; padding: 7px; margin-bottom: 6px; border-radius: 5px; border: 1px solid #cbd5e1; background: white;">
+              <option [ngValue]="null" disabled>-- Selecciona puntaje --</option>
+              <option [value]="20">Siempre (20 pts)</option>
+              <option [value]="10">Frecuentemente (10 pts)</option>
+              <option [value]="5">A veces (5 pts)</option>
+              <option [value]="0">Nunca (0 pts)</option>
+            </select>
+            <p style="font-size: 0.73rem; color: #64748b; margin: -2px 0 8px 0; line-height: 1.3;">
+              Indicado en ítem 1.2 del informe. Si es analítico: "Elaboración propia". Con IA: "Elaboración propia con uso de IA".
+            </p>
+
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 2px;">Tienen coherencia las preguntas (20 pts):</label>
+            <select [(ngModel)]="docenteCuestionarioCoherencia" style="width: 100%; padding: 7px; margin-bottom: 8px; border-radius: 5px; border: 1px solid #cbd5e1; background: white;">
+              <option [ngValue]="null" disabled>-- Selecciona puntaje --</option>
+              <option [value]="20">Siempre (20 pts)</option>
+              <option [value]="10">Frecuentemente (10 pts)</option>
+              <option [value]="5">A veces (5 pts)</option>
+              <option [value]="0">Nunca (0 pts)</option>
+            </select>
+            <p style="font-size: 0.73rem; color: #64748b; margin: -2px 0 10px 0;">
+              Cada pregunta debe tener 4 opciones de respuesta y total coherencia con el tema.
+            </p>
+
+            <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #1e40af; margin-bottom: 2px;">Observación / Comentario:</label>
+            <textarea [(ngModel)]="docenteCuestionarioComentarios" rows="2" placeholder="Observaciones sobre el cuestionario elaborado..." style="width: 100%; padding: 7px; border-radius: 5px; border: 1px solid #cbd5e1; box-sizing: border-box; font-size: 0.82rem;"></textarea>
+          </div>
+
+        </div>
+
+        <button *ngIf="estudianteSeleccionadoDocente" (click)="guardarNotasIndividualesDocente()" style="margin-top: 18px; background: #2563eb; color: white; border: none; padding: 12px 26px; border-radius: 7px; font-weight: 700; cursor: pointer; font-size: 0.95rem; box-shadow: 0 3px 10px rgba(37,99,235,0.25);">
+          Guardar Calificación Individual de {{ estudianteSeleccionadoDocente.nombre }}
+        </button>
+      </div>
+
+      <!-- ÚNICA TABLA MOSTRADA: SOLO EL GRUPO SELECCIONADO -->
+      <div *ngIf="grupoSeleccionadoDocente" style="background: white; border-radius: 12px; padding: 22px; margin-bottom: 20px; border: 2px solid #3b82f6; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.1);">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+          <div>
+            <h3 style="margin: 0; color: #1e3a8a; font-size: 1.2rem;">
+              👥 Integrantes de {{ grupoSeleccionadoDocente.nombre }}
+            </h3>
+            <span style="font-size: 0.82rem; color: #64748b;">
+              Haz clic en cualquier estudiante para cargar y modificar su rúbrica individual.
+            </span>
+          </div>
+          <span style="font-size: 0.8rem; background: #eff6ff; color: #1e40af; padding: 4px 10px; border-radius: 6px; font-weight: 700; border: 1px solid #bfdbfe;">
+            {{ grupoSeleccionadoDocente.integrantes.length }} Estudiantes
+          </span>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; min-width: 680px; border-collapse: collapse; font-size: 0.9rem;">
+            <thead>
+              <tr style="background: #f8fafc; text-align: left; border-bottom: 2px solid #e2e8f0;">
+                <th style="padding: 10px;">Estudiante</th>
+                <th style="padding: 10px;">Rol</th>
+                <th style="padding: 10px;">Votos Pares</th>
+                <th style="padding: 10px;">Pares (30%)</th>
+                <th style="padding: 10px;">Nota Final (/100)</th>
+                <th style="padding: 10px; text-align: center;">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let est of grupoSeleccionadoDocente.integrantes" 
+                  (click)="seleccionarEstudianteParaCalificar(est.id)"
+                  [style.background]="estudianteSeleccionadoId === est.id ? '#eff6ff' : 'white'"
+                  style="border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: background 0.15s ease;"
+                  onmouseover="this.style.background = '#f0f9ff'"
+                  onmouseout="this.style.background = (this.getAttribute('data-selected') === 'true' ? '#eff6ff' : 'white')"
+                  [attr.data-selected]="estudianteSeleccionadoId === est.id">
+                
+                <td style="padding: 10px; font-weight: 600; color: #0f172a;">
+                  <span *ngIf="estudianteSeleccionadoId === est.id" style="color: #2563eb; margin-right: 4px;">▶</span>
+                  {{ est.nombre }}
+                  <span *ngIf="est.esLider" style="font-size: 0.75rem; background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px; margin-left: 5px;">Líder</span>
+                </td>
+                
+                <td style="padding: 10px;">
+                  <span [style.color]="est.rol === 'Expositor' ? '#059669' : '#d97706'" style="font-weight: 700;">
+                    {{ est.rol }}
+                  </span>
+                </td>
+
+                <td style="padding: 10px; color: #64748b;">
+                  <span *ngIf="est.rol === 'Expositor'">{{ est.votosOral?.length || 0 }} votos</span>
+                  <span *ngIf="est.rol === 'Evaluador'">{{ est.votosCuestionario?.length || 0 }} votos</span>
+                </td>
+
+                <td style="padding: 10px; color: #059669; font-weight: 700;">
+                  {{ est.promedioCoevaluacion }} / 30 pts
+                </td>
+
+                <td style="padding: 10px; color: #1e40af; font-weight: 800; font-size: 1.05rem;">
+                  {{ est.notaFinal }}
+                </td>
+
+                <td style="padding: 10px; text-align: center;">
+                  <button (click)="seleccionarEstudianteParaCalificar(est.id); $event.stopPropagation();" 
+                          [style.background]="estudianteSeleccionadoId === est.id ? '#2563eb' : '#f1f5f9'"
+                          [style.color]="estudianteSeleccionadoId === est.id ? 'white' : '#334155'"
+                          style="border: 1px solid #cbd5e1; padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">
+                    {{ estudianteSeleccionadoId === est.id ? '✓ Seleccionado' : 'Calificar' }}
+                  </button>
+                </td>
+
+              </tr>
+
+              <tr *ngIf="grupoSeleccionadoDocente.integrantes.length === 0">
+                <td colspan="6" style="padding: 25px; text-align: center; color: #94a3b8; font-style: italic;">
+                  Este grupo aún no tiene integrantes registrados. Agrega estudiantes desde la pestaña "Agregar Estudiantes / Grupos".
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECCIÓN 2: GESTIÓN DE ESTUDIANTES Y GRUPOS -->
+    <div *ngIf="seccionDocente === 'estudiantes'">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 25px;">
+        
+        <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #bfdbfe; box-shadow: 0 2px 10px rgba(2, 132, 199, 0.05);">
+          <h3 style="margin: 0 0 12px 0;">➕ Crear Nuevo Grupo</h3>
+          <input type="text" [(ngModel)]="nuevoGrupoNombre" placeholder="Ejemplo: Grupo 8" style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; box-sizing: border-box; margin-bottom: 12px;">
+          <button (click)="agregarGrupo()" style="background: #059669; color: white; border: none; padding: 9px 16px; border-radius: 6px; font-weight: 700; cursor: pointer;">
+            Crear Grupo en este Curso
+          </button>
+        </div>
+
+        <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #bfdbfe; box-shadow: 0 2px 10px rgba(2, 132, 199, 0.05);">
+          <h3 style="margin: 0 0 12px 0;">👤 Agregar Estudiante al Grupo</h3>
+          <select [(ngModel)]="grupoSeleccionadoParaEstudiante" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 8px;">
+            <option [ngValue]="null" disabled>-- Selecciona el Grupo --</option>
+            <option *ngFor="let g of gruposCursoActual" [value]="g.id">{{ g.nombre }}</option>
+          </select>
+          <input type="text" [(ngModel)]="nuevoEstudianteNombre" placeholder="Nombre completo del estudiante" style="width: 100%; padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1; box-sizing: border-box; margin-bottom: 8px;">
+          
+          <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+            <select [(ngModel)]="nuevoEstudianteRol" style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1;">
+              <option value="Expositor">Expositor</option>
+              <option value="Evaluador">Evaluador</option>
+            </select>
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600;">
+              <input type="checkbox" [(ngModel)]="nuevoEstudianteEsLider"> ¿Es Líder?
+            </label>
+          </div>
+
+          <button (click)="agregarEstudianteAGrupo()" style="background: #2563eb; color: white; border: none; padding: 9px 16px; border-radius: 6px; font-weight: 700; cursor: pointer;">
+            Guardar Estudiante
+          </button>
+        </div>
+      </div>
+
+      <div *ngFor="let g of gruposCursoActual" style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid #bfdbfe; box-shadow: 0 2px 10px rgba(2, 132, 199, 0.05);">
+        <h4 style="margin: 0 0 10px 0; color: #0f172a; font-weight: 800;">{{ g.nombre }} ({{ g.integrantes.length }} integrantes)</h4>
+        <div *ngIf="g.integrantes.length === 0" style="color: #94a3b8; font-size: 0.85rem; font-style: italic; padding: 4px 0;">
+          No hay estudiantes asignados en este grupo aún.
+        </div>
+        <div *ngFor="let est of g.integrantes" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f1f5f9;">
+          <div>
+            <strong style="color: #1e293b;">{{ est.nombre }}</strong> 
+            <span style="font-size: 0.8rem; color: #64748b; margin-left: 8px;">({{ est.rol }}{{ est.esLider ? ' - Líder' : '' }})</span>
+          </div>
+          <button (click)="eliminarEstudiante(g.id, est.id)" style="background: #fee2e2; color: #dc2626; border: none; padding: 4px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
+            Eliminar
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="gruposCursoActual.length === 0" style="background: white; border-radius: 12px; padding: 25px; text-align: center; border: 1px solid #bfdbfe; color: #64748b;">
+        Este curso aún no tiene ningún grupo creado. Utiliza el formulario superior para crear el Grupo 1.
+      </div>
+    </div>
+
+    <!-- SECCIÓN 3: CURSOS Y CLAVES (CON CAMBIO DE CLAVE DOCENTE Y BOTÓN DE BORRAR) -->
+    <div *ngIf="seccionDocente === 'claves'">
+
+      <!-- CAMBIO DE CLAVE DEL DOCENTE -->
+      <div style="background: white; padding: 22px; border-radius: 12px; margin-bottom: 25px; border: 2px solid #93c5fd; box-shadow: 0 4px 14px rgba(30,64,175,0.06);">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+          <span style="font-size: 1.3rem;">🛡️</span>
+          <h3 style="margin: 0; color: #1e40af; font-size: 1.1rem; font-weight: 800;">
+            Seguridad: Cambiar Contraseña del Docente
+          </h3>
+        </div>
+        <p style="color: #64748b; font-size: 0.85rem; margin: 0 0 15px 0;">
+          Actualiza la contraseña maestra de acceso para el Ing. Johnny Paul Novillo Vicuña. El cambio se aplicará de inmediato.
+        </p>
+
+        <div style="display: flex; gap: 10px; max-width: 520px; flex-wrap: wrap;">
+          <input type="text" [(ngModel)]="nuevaClaveDocenteInput" placeholder="Escribe la nueva contraseña docente..." style="flex: 1; min-width: 240px; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: 600;">
+          <button (click)="actualizarClaveDocente()" style="background: #1e40af; color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.9rem;">
+            Actualizar Clave
+          </button>
+        </div>
+      </div>
+
+      <!-- AGREGAR NUEVO CURSO O PARALELO -->
+      <div style="background: white; padding: 22px; border-radius: 12px; margin-bottom: 25px; border: 1px solid #bfdbfe; box-shadow: 0 2px 10px rgba(2, 132, 199, 0.05);">
+        <h3 style="margin: 0 0 12px 0;">➕ Agregar Nuevo Curso o Paralelo</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px;">
+          <input type="text" [(ngModel)]="nuevoCursoNombre" placeholder="Ej: Tercer Semestre" style="padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1;">
+          <input type="text" [(ngModel)]="nuevoCursoParalelo" placeholder="Paralelo (Ej: A, B, C)" style="padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1;">
+          <input type="text" [(ngModel)]="nuevoCursoClave" placeholder="Contraseña de curso" style="padding: 9px; border-radius: 6px; border: 1px solid #cbd5e1;">
+        </div>
+        <button (click)="agregarNuevoCurso()" style="background: #059669; color: white; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 700; cursor: pointer;">
+          Guardar Nuevo Curso
+        </button>
+      </div>
+
+      <!-- CONTRASEÑAS DE ACCESO DE LOS CURSOS Y BOTÓN DE BORRAR -->
+      <div style="background: white; padding: 22px; border-radius: 12px; border: 1px solid #bfdbfe; box-shadow: 0 2px 10px rgba(2, 132, 199, 0.05);">
+        <h3 style="margin: 0 0 15px 0;">🔑 Contraseñas de Acceso de los Cursos</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 20px;">
+          <div *ngFor="let c of cursos" style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                <span style="font-weight: 700; color: #0f172a; font-size: 0.95rem;">{{ c.nombre }} - Paralelo {{ c.paralelo }}</span>
+                <button (click)="eliminarCurso(c.id, c.nombre + ' - Paralelo ' + c.paralelo)" title="Eliminar curso" style="background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; padding: 3px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">
+                  🗑️ Borrar
+                </button>
+              </div>
+              <label style="font-size: 0.78rem; color: #64748b;">Clave de acceso:</label>
+              <input type="text" [(ngModel)]="c.clave" style="width: 100%; padding: 7px; border-radius: 5px; border: 1px solid #cbd5e1; box-sizing: border-box; margin-top: 3px; font-weight: 600;">
+            </div>
+          </div>
+        </div>
+        <button (click)="actualizarClavesCursos()" style="background: #2563eb; color: white; border: none; padding: 11px 22px; border-radius: 6px; font-weight: 700; cursor: pointer;">
+          Guardar Cambios de Contraseñas
+        </button>
+      </div>
+
+    </div>
+    </div>
+  </main>
+
+  
+<!-- ===== INICIO DEL PANEL ESTUDIANTIL ===== -->
+
+<main
+  *ngIf="vistaActual === 'inicio_estudiante'"
+  class="ev-contenido-estudiante">
+
+  <div class="ev-bienvenida">
+
+    <h1>¡Bienvenido a EVADEX!</h1>
+
+    <p>
+      Hola, {{ nombrePerfilEstudiante }}.
+      Bienvenido a tu espacio de evaluación académica.
+    </p>
+
+  </div>
+
+  <div class="ev-panel-informacion">
+
+    <div class="ev-tarjeta-info">
+      <span class="ev-icono">🎓</span>
+      <h3>Mi curso</h3>
+
+      <p>
+        {{ cursoEstudianteActivo?.nombre }}
+        - Paralelo {{ cursoEstudianteActivo?.paralelo }}
+      </p>
+
+      <p>
+        {{ hemisemestreActivo === 'hemisemestre_1'
+          ? 'Primer Hemisemestre'
+          : 'Segundo Hemisemestre' }}
+      </p>
+    </div>
+
+    <div class="ev-tarjeta-info">
+      <span class="ev-icono">📝</span>
+      <h3>Coevaluación de Pares</h3>
+
+      <p>
+        Evalúa las exposiciones y cuestionarios
+        utilizando las rúbricas oficiales.
+      </p>
+
+      <button
+        type="button"
+        class="ev-btn-verde"
+        (click)="abrirSeccionEstudiante('panel_estudiante')">
+        Comenzar evaluación →
+      </button>
+    </div>
+
+    <div class="ev-tarjeta-info">
+      <span class="ev-icono">📊</span>
+      <h3>Consulta de Notas</h3>
+
+      <p>
+        Revisa tus calificaciones,
+        coevaluaciones y observaciones del docente.
+      </p>
+
+      <button
+        type="button"
+        class="ev-btn-azul"
+        (click)="abrirSeccionEstudiante('consulta_notas')">
+        Consultar mis calificaciones →
+      </button>
+    </div>
+
+    <div class="ev-tarjeta-info">
+      <span class="ev-icono">👤</span>
+      <h3>Mi perfil</h3>
+
+      <p>
+        Consulta la información con la que
+        ingresaste al sistema EVADEX.
+      </p>
+
+      <button
+        type="button"
+        class="ev-btn-azul"
+        (click)="abrirSeccionEstudiante('perfil_estudiante')">
+        Ver mi perfil →
+      </button>
+    </div>
+  
+  </div>
+
+</main>
+
+<!-- ===== FIN INICIO ESTUDIANTIL ===== -->
+
+<!-- ===== PERFIL DEL ESTUDIANTE ===== -->
+
+<main
+  *ngIf="vistaActual === 'perfil_estudiante'"
+  class="ev-contenido-estudiante">
+
+  <div class="ev-perfil-tarjeta">
+
+    <div class="ev-perfil-icono">👤</div>
+
+    <h2>Mi perfil estudiantil</h2>
+
+    <p class="ev-perfil-descripcion">
+      Información de tu acceso actual a EVADEX
+    </p>
+
+    <div class="ev-perfil-dato">
+      <strong>Nombre:</strong>
+      <span>{{ nombrePerfilEstudiante }}</span>
+    </div>
+
+    <div class="ev-perfil-dato">
+      <strong>Curso:</strong>
+      <span>{{ cursoEstudianteActivo?.nombre }}</span>
+    </div>
+
+    <div class="ev-perfil-dato">
+      <strong>Paralelo:</strong>
+      <span>{{ cursoEstudianteActivo?.paralelo }}</span>
+    </div>
+
+    <div class="ev-perfil-dato">
+      <strong>Periodo:</strong>
+      <span>
+        {{ hemisemestreActivo === 'hemisemestre_1'
+          ? 'Primer Hemisemestre'
+          : 'Segundo Hemisemestre' }}
+      </span>
+    </div>
+
+    <div class="ev-perfil-dato">
+      <strong>Tipo de acceso:</strong>
+      <span>Estudiante</span>
+    </div>
+
+    <button
+      type="button"
+      class="ev-btn-azul"
+      (click)="abrirSeccionEstudiante('inicio_estudiante')">
+      Volver al inicio
+    </button>
+
+  </div>
+
+</main>
+
+<!-- ===== FIN PERFIL ===== -->
+
+  <!-- ==================== PANEL ESTUDIANTE (COEVALUACIÓN) ==================== -->
+  <main
+  *ngIf="vistaActual === 'panel_estudiante'"
+  class="ev-contenido-estudiante"
+  style="flex: 1; max-width: 680px; width: 100%; margin: 20px auto; background: white; padding: 25px; border-radius: 14px; box-shadow: 0 4px 20px rgba(2, 132, 199, 0.1); border: 1px solid #bfdbfe; box-sizing: border-box;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+      <div>
+        <h2 style="margin: 0; font-size: 1.25rem; color: #0f172a;">EVADEX - Coevaluación de Pares</h2>
+        <div style="display: flex; gap: 8px; margin-top: 4px;">
+          <span style="font-size: 0.8rem; color: #059669; font-weight: 600;">
+            {{ cursoEstudianteActivo?.nombre }} - Paralelo {{ cursoEstudianteActivo?.paralelo }}
+          </span>
+          <span style="font-size: 0.8rem; color: #0369a1; font-weight: 700; background: #e0f2fe; padding: 1px 8px; border-radius: 6px;">
+            {{ hemisemestreActivo === 'hemisemestre_1' ? '1er Hemisemestre' : '2do Hemisemestre' }}
+          </span>
+        </div>
+      </div>
+      <button (click)="cerrarSesionEstudiantePanel()" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">
+        ← Salir
+      </button>
+    </div>
+
+    <div style="margin-bottom: 18px; background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+      <label style="display: block; font-weight: 700; font-size: 0.9rem; color: #0f172a; margin-bottom: 6px;">
+        1. Ingresa tu Nombre (¿Quién está evaluando?):
+      </label>
+      <input type="text" [(ngModel)]="nombreEvaluadorInput" placeholder="Ejemplo: Juan Pérez" style="width: 100%; padding: 11px; border-radius: 6px; border: 1px solid #cbd5e1; box-sizing: border-box; font-size: 0.95rem;">
+    </div>
+
+    <div style="margin-bottom: 20px; background: #eff6ff; padding: 14px; border-radius: 8px; border: 1px solid #bfdbfe;">
+      <label style="display: block; font-weight: 700; font-size: 0.9rem; color: #1e40af; margin-bottom: 6px;">
+        2. Selecciona el Grupo a Evaluar:
+      </label>
+      
+      <select [(ngModel)]="grupoEstudianteSeleccionadoId" (ngModelChange)="alCambiarGrupo()" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #93c5fd; font-weight: 600; background: white; font-size: 0.95rem; cursor: pointer;">
+        <option [ngValue]="null" disabled>-- Elige qué grupo expone hoy --</option>
+        <option *ngFor="let g of gruposCursoActual" [value]="g.id">{{ g.nombre }}</option>
+      </select>
+    </div>
+
+    <div *ngIf="grupoEstudianteSeleccionado && nombreEvaluadorInput.trim() !== ''" style="border-top: 2px solid #f1f5f9; padding-top: 15px;">
+      
+      <div *ngIf="evaluadorPerteneceAlGrupo" style="background: #fef2f2; border: 2px solid #fecaca; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 15px;">
+        <div style="font-size: 2.2rem; margin-bottom: 6px;">🚫</div>
+        <h3 style="margin: 0 0 6px 0; color: #991b1b; font-size: 1.15rem;">Autoevaluación No Permitida</h3>
+        <p style="margin: 0; color: #7f1d1d; font-size: 0.9rem; line-height: 1.5;">
+          El sistema detectó que <strong>{{ nombreEvaluadorInput.trim() }}</strong> es integrante de <strong>{{ grupoEstudianteSeleccionado.nombre }}</strong>.<br>
+          No puedes calificar a tu propio equipo.
+        </p>
+      </div>
+
+      <div *ngIf="!evaluadorPerteneceAlGrupo">
+        
+        <!-- A. EXPOSICIÓN ORAL (30 PTS A EXPOSITORES) -->
+        <h3 style="margin: 0 0 4px 0; font-size: 1.05rem; color: #065f46;">
+          A. Exposición Oral (Rúbrica para Expositores - 30 pts c/u)
+        </h3>
+        <p style="font-size: 0.8rem; color: #64748b; margin: 0 0 12px 0;">
+          Evalúa la claridad y el desenvolvimiento de cada expositor.
+        </p>
+
+        <div *ngFor="let est of expositoresDelGrupo" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; margin-bottom: 12px;">
+          <div style="font-weight: 700; color: #0f172a; margin-bottom: 8px;">
+            👤 {{ est.nombre }} <span *ngIf="est.esLider" style="font-size: 0.75rem; background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px;">Líder</span>
+          </div>
+
+          <div style="margin-bottom: 8px;" *ngIf="rubricaTemporalOral[est.id]">
+            <label style="display: block; font-size: 0.8rem; color: #475569; margin-bottom: 2px;">
+              Realiza lecturas extensas de información (15 pts):
+            </label>
+            <select [(ngModel)]="rubricaTemporalOral[est.id].lectura" style="width: 100%; padding: 7px; border-radius: 5px; border: 1px solid #cbd5e1; background: white;">
+              <option [value]="15">NO (15 pts)</option>
+              <option [value]="10">A VECES (10 pts)</option>
+              <option [value]="5">SIEMPRE (5 pts)</option>
+            </select>
+            <p style="font-size: 0.72rem; color: #64748b; margin: 2px 0 0 0;">
+              Usa organizadores gráficos e imágenes amenas que evitan lecturas extensas de texto.
+            </p>
+          </div>
+
+          <div *ngIf="rubricaTemporalOral[est.id]">
+            <label style="display: block; font-size: 0.8rem; color: #475569; margin-bottom: 2px;">
+              Transmite claramente la información (15 pts):
+            </label>
+            <select [(ngModel)]="rubricaTemporalOral[est.id].claridad" style="width: 100%; padding: 7px; border-radius: 5px; border: 1px solid #cbd5e1; background: white;">
+              <option [value]="15">SIEMPRE (15 pts)</option>
+              <option [value]="10">A VECES (10 pts)</option>
+              <option [value]="5">NO (5 pts)</option>
+            </select>
+            <p style="font-size: 0.72rem; color: #64748b; margin: 2px 0 0 0;">
+              Manejo del nerviosismo, seguridad en lo que habla, buena investigación y preparación.
+            </p>
+          </div>
+        </div>
+
+        <!-- B. APLICACIÓN DEL CUESTIONARIO (30 PTS AL EVALUADOR) -->
+        <div *ngIf="evaluadorDesignadoDelGrupo" style="margin-top: 25px; border-top: 2px dashed #cbd5e1; padding-top: 15px;">
+          <h3 style="margin: 0 0 4px 0; font-size: 1.05rem; color: #b45309;">
+            B. Aplicación del Cuestionario (Evaluador: {{ evaluadorDesignadoDelGrupo.nombre }})
+          </h3>
+          <p style="font-size: 0.8rem; color: #64748b; margin: 0 0 12px 0;">
+            Rúbrica oficial para la calificación de evaluadores (30 pts).
+          </p>
+
+          <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 10px; padding: 14px;">
+            <div style="margin-bottom: 10px;">
+              <label style="display: block; font-size: 0.8rem; color: #92400e; font-weight: 600; margin-bottom: 3px;">
+                Herramienta informática utilizada (15 pts):
+              </label>
+              <select [(ngModel)]="rubricaTemporalCuestionario.herramienta" style="width: 100%; padding: 7px; border-radius: 5px; border: 1px solid #fde68a; background: white;">
+                <option [value]="15">Apropiada (Quizz, Formularios de Google) (15 pts)</option>
+                <option [value]="10">No apropiada (10 pts)</option>
+                <option [value]="5">No se aplica el cuestionario (5 pts)</option>
+              </select>
+              <p style="font-size: 0.72rem; color: #92400e; margin: 2px 0 0 0;">
+                Requiere visto bueno previo del profesor sobre el informe para evitar que no sea aplicado.
+              </p>
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.8rem; color: #92400e; font-weight: 600; margin-bottom: 3px;">
+                Cantidad de preguntas elaboradas (15 pts):
+              </label>
+              <select [(ngModel)]="rubricaTemporalCuestionario.cantidad" style="width: 100%; padding: 7px; border-radius: 5px; border: 1px solid #fde68a; background: white;">
+                <option [value]="15">Adecuada (Mínimo 5 y máx 10 preguntas) (15 pts)</option>
+                <option [value]="10">No adecuada (10 pts)</option>
+                <option [value]="5">Insuficiente o no se aplica el cuestionario (5 pts)</option>
+              </select>
+              <p style="font-size: 0.72rem; color: #92400e; margin: 2px 0 0 0;">
+                Tiempo máx. 15 minutos, balance teórico/ejercicios con al menos 2 preguntas de resolución práctica.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <button (click)="enviarEvaluacionEstudiante()" [disabled]="guardandoEnProceso" style="width: 100%; background: #059669; color: white; border: none; padding: 13px; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 18px; box-shadow: 0 4px 10px rgba(5,150,105,0.25);">
+          {{ guardandoEnProceso ? 'Guardando en la nube...' : 'Guardar Coevaluación Oficial (' + (hemisemestreActivo === 'hemisemestre_1' ? '1er Hemisemestre' : '2do Hemisemestre') + ')' }}
+        </button>
+      </div>
+    </div>
+    
+  </main>
+
+  <!-- ==================== CRÉDITOS OFICIALES ==================== -->
+  <footer style="padding: 18px 24px; display: flex; justify-content: flex-end; align-items: center; box-sizing: border-box;">
+    <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(4px); border: 1px solid #bfdbfe; padding: 10px 18px; border-radius: 10px; font-size: 0.82rem; color: #64748b; text-align: right; box-shadow: 0 2px 10px rgba(2, 132, 199, 0.06);">
+      <div>Desarrollado por: <strong style="color: #334155;">Roger Bravo, Neytan Armijos, Nayerli Orellana & Diego Pelay</strong></div>
+      <div style="margin-top: 3px;">Auspiciado por el <strong style="color: #1e40af;">Ing. NOVILLO VICUÑA JOHNNY PAUL</strong></div>
+    </div>
+  </footer>
+
+</div>
+

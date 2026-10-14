@@ -1,0 +1,1094 @@
+/* Contenedor fluido para pantallas pequeñas y grandes */
+.contenedor-principal {
+  width: 100%;
+  max-width: 900px;
+  margin: 20px auto;
+  box-sizing: border-box;
+  padding: 15px;
+}
+
+/* Cuadrícula de tarjetas de acceso: 2 columnas en PC, 1 en móvil */
+.grid-accesos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 25px;
+}
+
+/* Formulario adaptable docente (apilado en celular, en fila en PC) */
+.grid-formulario {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  align-items: end;
+}
+
+/* Evitar que las tablas de notas desborden la pantalla del celular */
+.tabla-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  width: 100%;
+  min-width: 550px; /* Asegura legibilidad en pantallas estrechas con scroll lateral */
+}
+
+/* ========== NUEVO LOGIN PRINCIPAL EVADEX ========== */
+
+/* Fondo azul completo */
+.evadex-login-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 15px;
+  box-sizing: border-box;
+
+  background: linear-gradient(
+    120deg,
+    #002344 0%,
+    #00345d 52%,
+    #004d78 100%
+  );
+
+  overflow-y: auto;
+  isolation: isolate;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+/* Círculos decorativos */
+.evadex-circulo {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.circulo-1 {
+  width: 300px;
+  height: 300px;
+  top: -140px;
+  left: -70px;
+  background: rgba(169, 197, 218, 0.26);
+}
+
+.circulo-2 {
+  width: 200px;
+  height: 200px;
+  top: 18%;
+  right: 6%;
+  background: rgba(0, 136, 199, 0.25);
+}
+
+.circulo-3 {
+  width: 140px;
+  height: 140px;
+  bottom: 15%;
+  left: 10%;
+  background: rgba(0, 137, 203, 0.24);
+}
+
+.circulo-4 {
+  width: 260px;
+  height: 260px;
+  bottom: -80px;
+  right: -70px;
+  background: rgba(169, 197, 218, 0.25);
+}
+
+/* Tarjeta central */
+.evadex-login-tarjeta {
+  width: 100%;
+  max-width: 360px;
+  max-height: calc(100dvh - 30px);
+  overflow-y: auto;
+  box-sizing: border-box;
+
+  padding: 32px 30px 30px;
+  border-radius: 23px;
+
+  background: rgba(77, 122, 158, 0.40);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.10);
+  text-align: center;
+  color: white;
+
+  backdrop-filter: blur(12px);
+}
+
+/* Logo */
+.evadex-logo img {
+  height: 85px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 15px rgba(255,255,255,0.20));
+}
+
+/* Título */
+.evadex-login-titulo {
+  color: #ffffff;
+  font-size: 36px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin: 10px 0 4px;
+}
+
+/* Subtítulo */
+.evadex-login-subtitulo {
+  font-size: 12px;
+  color: #ffffff;
+  margin: 0 0 27px;
+}
+
+/* Botones Estudiante / Docente */
+.evadex-login-opciones {
+  display: flex;
+  gap: 9px;
+  margin-bottom: 24px;
+}
+
+.evadex-login-opciones button {
+  flex: 1;
+  border: none;
+  border-radius: 11px;
+  padding: 13px 8px;
+  color: white;
+  background: rgba(255,255,255,0.13);
+  font-family: inherit;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+/* Botón seleccionado */
+.evadex-login-opciones button.activo {
+  color: #00509c;
+  background: white;
+  font-weight: bold;
+}
+/* Campos */
+.evadex-login-campo {
+  margin-bottom: 17px;
+  text-align: left;
+}
+
+.evadex-login-campo label {
+  display: block;
+  margin-bottom: 8px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Inputs y select */
+.evadex-login-campo input,
+.evadex-login-campo select {
+  display: block;
+  width: 100%;
+  height: 46px;
+  box-sizing: border-box;
+
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.28);
+
+  background: rgba(145, 184, 212, 0.22);
+  color: white;
+
+  padding: 0 13px;
+  font-size: 14px;
+  font-family: inherit;
+
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.evadex-login-campo input::placeholder {
+  color: #d1e0ef;
+}
+
+.evadex-login-campo input:focus,
+.evadex-login-campo select:focus {
+  border-color: white;
+  background: rgba(145, 184, 212, 0.35);
+}
+
+/* Opciones del selector */
+.evadex-login-campo select option {
+  color: #0f172a;
+  background: white;
+}
+
+/* Botón de inicio de sesión */
+.evadex-login-boton {
+  display: block;
+  width: 100%;
+  height: 45px;
+
+  margin-top: 21px;
+  border: none;
+  border-radius: 10px;
+
+  background: white;
+  color: #00509c;
+
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.evadex-login-boton:hover {
+  background: #e0f2fe;
+  transform: translateY(-1px);
+}
+
+.evadex-login-boton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Error */
+.evadex-login-error {
+  margin: 10px 0;
+  padding: 9px;
+  border-radius: 7px;
+
+  color: #fee2e2;
+  background: rgba(185, 28, 28, 0.25);
+  font-size: 12px;
+}
+
+/* Recuperar contraseña */
+.evadex-login-recuperar {
+  display: block;
+  margin: 17px auto 0;
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: #ffffff;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.evadex-login-recuperar:hover {
+  text-decoration: underline;
+}
+
+/* Pie de tarjeta */
+.evadex-login-universidad {
+  margin-top: 25px;
+  margin-bottom: 2px;
+  color: #dbeafe;
+  font-size: 12px;
+}
+
+/* Diseño adaptable para celulares */
+@media (max-width: 480px) {
+
+  .evadex-login-tarjeta {
+    padding: 25px 20px;
+    border-radius: 18px;
+  }
+
+  .evadex-login-titulo {
+    font-size: 30px;
+  }
+
+  .evadex-login-opciones button {
+    font-size: 13px;
+  }
+
+  .evadex-logo img {
+    height: 72px;
+  }
+
+}
+
+
+/* ========== CORRECCIÓN FINAL DEL LOGIN ========== */
+
+/* Pantalla completa sin barras */
+.evadex-login-fondo {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+
+  padding: 12px !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+
+  overflow: hidden !important;
+}
+
+/* Tarjeta sin desplazamiento interno */
+.evadex-login-tarjeta {
+  width: 100% !important;
+  max-width: 360px !important;
+
+  height: auto !important;
+  max-height: none !important;
+
+  padding: 18px 26px !important;
+  box-sizing: border-box !important;
+
+  overflow: visible !important;
+}
+
+/* Evita que los elementos desborden */
+.evadex-login-tarjeta * {
+  box-sizing: border-box;
+}
+
+/* Logo un poco más compacto */
+.evadex-logo img {
+  height: 68px !important;
+}
+
+/* Reducir espacios */
+.evadex-login-titulo {
+  margin: 6px 0 3px !important;
+  font-size: 33px !important;
+}
+
+.evadex-login-subtitulo {
+  margin-bottom: 18px !important;
+}
+
+.evadex-login-opciones {
+  margin-bottom: 16px !important;
+}
+
+.evadex-login-campo {
+  margin-bottom: 11px !important;
+}
+
+.evadex-login-campo input,
+.evadex-login-campo select {
+  height: 41px !important;
+}
+
+.evadex-login-boton {
+  height: 42px !important;
+  margin-top: 14px !important;
+}
+
+.evadex-login-recuperar {
+  margin-top: 12px !important;
+}
+
+.evadex-login-universidad {
+  margin-top: 16px !important;
+}
+
+/* Pantallas pequeñas en altura */
+@media (max-height: 650px) {
+  .evadex-login-tarjeta {
+    padding: 12px 20px !important;
+    max-height: calc(100dvh - 20px) !important;
+    overflow-y: auto !important;
+  }
+
+  .evadex-logo img {
+    height: 48px !important;
+  }
+
+  .evadex-login-subtitulo {
+    margin-bottom: 10px !important;
+  }
+}
+
+/* Bloquear desplazamiento del documento durante el login */
+body:has(.evadex-login-fondo) {
+  overflow: hidden !important;
+  margin: 0 !important;
+}
+
+html:has(.evadex-login-fondo) {
+  overflow: hidden !important;
+}
+
+.evadex-login-fondo .evadex-circulo {
+  pointer-events: none;
+}
+
+/* ========== MEJORAR VISIBILIDAD DEL LOGO UTMACH ========== */
+
+.evadex-logo {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ffffff;
+  border-radius: 50%;
+
+  box-shadow: 0 4px 18px rgba(255, 255, 255, 0.25);
+}
+
+.evadex-logo img {
+  width: 76px !important;
+  height: 76px !important;
+  object-fit: contain;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Ajuste para celulares */
+@media (max-width: 480px) {
+  .evadex-logo {
+    width: 74px;
+    height: 74px;
+    margin-bottom: 8px;
+  }
+
+  .evadex-logo img {
+    width: 64px !important;
+    height: 64px !important;
+  }
+}
+
+/* ===== NUEVO PANEL ESTUDIANTIL EVADEX ===== */
+
+/* Menú lateral */
+.ev-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  width: 245px;
+  padding: 24px 14px;
+  box-sizing: border-box;
+
+  background: linear-gradient(180deg, #063b66, #002c51);
+  color: white;
+
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: 3px 0 15px rgba(0, 0, 0, 0.12);
+}
+
+/* Perfil lateral */
+.ev-sidebar-perfil {
+  text-align: center;
+  padding: 15px 5px;
+}
+
+.ev-sidebar-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.35);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 12px;
+  font-size: 32px;
+}
+
+.ev-sidebar-perfil h3 {
+  font-size: 16px;
+  margin: 5px 0;
+  overflow-wrap: anywhere;
+}
+
+.ev-sidebar-perfil p {
+  font-size: 12px;
+  color: #dbeafe;
+  line-height: 1.5;
+}
+
+.ev-sidebar-perfil span {
+  font-size: 11px;
+  color: #a5d8ff;
+}
+
+.ev-sidebar-separador {
+  height: 1px;
+  background: rgba(255,255,255,0.20);
+  margin: 15px 0;
+}
+
+/* Navegación */
+.ev-sidebar-navegacion {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ev-sidebar-navegacion button {
+  width: 100%;
+  text-align: left;
+
+  padding: 13px 15px;
+  border: none;
+  border-radius: 9px;
+
+  background: transparent;
+  color: white;
+
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.ev-sidebar-navegacion button:hover,
+.ev-sidebar-navegacion button.ev-menu-activo {
+  background: rgba(255,255,255,0.18);
+}
+
+/* Cerrar sesión */
+.ev-sidebar-salir {
+  margin-top: auto;
+  padding: 12px;
+  border-radius: 8px;
+
+  background: rgba(220,38,38,0.18);
+  border: 1px solid rgba(255,255,255,0.18);
+
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.ev-sidebar-salir:hover {
+  background: #b91c1c;
+}
+
+/* Área principal */
+.ev-contenido-estudiante {
+  margin: 25px 25px 25px 270px !important;
+  width: calc(100% - 295px) !important;
+  max-width: none !important;
+  min-width: 0;
+  box-sizing: border-box;
+  align-self: flex-start;
+}
+
+/* Bienvenida */
+.ev-bienvenida {
+  padding: 25px 30px;
+  border-radius: 15px;
+
+  background: linear-gradient(120deg, #07558a, #0369a1);
+  color: white;
+
+  margin-bottom: 22px;
+}
+
+.ev-bienvenida h1 {
+  font-size: 25px;
+  margin: 0 0 8px;
+}
+
+.ev-bienvenida p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Tarjetas */
+.ev-panel-informacion {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.ev-tarjeta-info {
+  background: white;
+  padding: 24px;
+
+  border: 1px solid #bfdbfe;
+  border-radius: 14px;
+
+  box-shadow: 0 4px 14px rgba(2,132,199,0.06);
+}
+
+.ev-icono {
+  font-size: 30px;
+}
+
+.ev-tarjeta-info h3 {
+  color: #0f172a;
+  font-size: 18px;
+  margin: 12px 0;
+}
+
+.ev-tarjeta-info p {
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Botones */
+.ev-btn-verde,
+.ev-btn-azul {
+  border: none;
+  border-radius: 8px;
+
+  padding: 12px 16px;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.ev-btn-verde {
+  background: #059669;
+}
+
+.ev-btn-azul {
+  background: #2563eb;
+}
+
+.ev-btn-verde:hover {
+  background: #047857;
+}
+
+.ev-btn-azul:hover {
+  background: #1d4ed8;
+}
+
+/* Perfil principal */
+.ev-perfil-tarjeta {
+  background: white;
+  border: 1px solid #bfdbfe;
+  border-radius: 16px;
+
+  padding: 30px;
+  max-width: 650px;
+
+  box-shadow: 0 4px 20px rgba(2,132,199,0.08);
+}
+
+.ev-perfil-icono {
+  font-size: 48px;
+  text-align: center;
+}
+
+.ev-perfil-tarjeta h2 {
+  text-align: center;
+  color: #0f172a;
+}
+
+.ev-perfil-descripcion {
+  text-align: center;
+  color: #64748b;
+  margin-bottom: 25px;
+}
+
+.ev-perfil-dato {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+
+  padding: 13px 0;
+  border-bottom: 1px solid #e2e8f0;
+
+  color: #334155;
+  font-size: 14px;
+}
+
+.ev-perfil-dato span {
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+/* Menú móvil: oculto en computadora */
+.ev-menu-movil,
+.ev-menu-fondo {
+  display: none;
+}
+
+/* Tabletas y celulares */
+@media (max-width: 800px) {
+
+  .ev-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    width: min(260px, 85vw);
+    z-index: 1001;
+  }
+
+  .ev-sidebar.ev-sidebar-abierto {
+    transform: translateX(0);
+  }
+
+  .ev-menu-movil {
+    display: block;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1000;
+
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+
+    background: #063b66;
+    color: white;
+    font-weight: bold;
+
+    box-shadow: 0 3px 12px rgba(0,0,0,0.18);
+  }
+
+  .ev-menu-fondo {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1000;
+  }
+
+  .ev-contenido-estudiante {
+    margin: 65px 12px 20px !important;
+    width: calc(100% - 24px) !important;
+    max-width: none !important;
+    padding: 18px !important;
+  }
+
+  .ev-panel-informacion {
+    grid-template-columns: 1fr;
+  }
+
+  .ev-bienvenida {
+    padding: 20px;
+  }
+
+  .ev-bienvenida h1 {
+    font-size: 21px;
+  }
+
+  .ev-perfil-tarjeta {
+    padding: 20px;
+  }
+
+}
+
+/* ===== FIN DEL PANEL ESTUDIANTIL ===== */
+/* ===== PANEL DOCENTE REDISEÑADO ===== */
+
+.ev-docente-panel {
+  margin: 25px 25px 25px 25px !important;
+  width: calc(100% - 50px) !important;
+  max-width: 1180px !important;
+  box-sizing: border-box;
+}
+
+/* Barra superior */
+.ev-docente-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+
+  background: white;
+  border: 1px solid #bfdbfe;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.08);
+
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+
+/* Contenedor interno opcional de tabs si ya existe */
+.ev-docente-toolbar > div:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Tabs del docente */
+.ev-docente-tab {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  background: #e0f2fe;
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08);
+}
+
+.ev-docente-tab:hover {
+  transform: translateY(-1px);
+  background: #dbeafe;
+}
+
+/* Botones de acciones */
+.ev-docente-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.ev-docente-btn:hover {
+  transform: translateY(-1px);
+}
+
+.ev-docente-btn-pdf {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.25);
+}
+
+.ev-docente-btn-pdf:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+.ev-docente-btn-salir {
+  background: #64748b;
+  box-shadow: 0 6px 14px rgba(100, 116, 139, 0.18);
+}
+
+.ev-docente-btn-salir:hover {
+  background: #475569;
+}
+
+/* Tarjetas */
+.ev-docente-card {
+  background: white;
+  border: 1px solid #bfdbfe;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.08);
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+
+/* Selects */
+.ev-docente-select {
+  min-width: 240px;
+  height: 42px;
+  border: 1px solid #93c5fd;
+  border-radius: 10px;
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  background: white;
+  color: #0f172a;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.ev-docente-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Texto de etiquetas */
+.ev-docente-card label,
+.ev-docente-card strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+/* Pills de hemisemestre */
+.ev-docente-card button {
+  transition: 0.2s ease;
+}
+
+.ev-docente-card button:hover {
+  transform: translateY(-1px);
+}
+
+/* Mensajes */
+.ev-docente-card p {
+  color: #475569;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .ev-docente-panel {
+    margin: 15px 12px !important;
+    width: calc(100% - 24px) !important;
+  }
+
+  .ev-docente-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ev-docente-toolbar > div:first-child {
+    width: 100%;
+  }
+
+  .ev-docente-tab,
+  .ev-docente-btn {
+    width: 100%;
+  }
+
+  .ev-docente-select {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* ===== FIN PANEL DOCENTE ===== */
+
+/* ===== DISEÑO DEL NUEVO PANEL DOCENTE ===== */
+
+/* Mismo espacio que el panel del estudiante */
+.ev-docente-panel {
+  margin: 25px 25px 25px 270px !important;
+  width: calc(100% - 295px) !important;
+  max-width: none !important;
+  min-width: 0;
+  align-self: flex-start;
+  box-sizing: border-box;
+}
+
+/* Ocultar barra horizontal antigua.
+   Las mismas opciones están en el menú lateral. */
+.ev-docente-panel .ev-docente-toolbar {
+  display: none !important;
+}
+
+/* Bienvenida */
+.ev-inicio-docente {
+  width: 100%;
+}
+
+.ev-inicio-docente .ev-bienvenida {
+  background: linear-gradient(120deg, #07558a, #0369a1);
+  border-radius: 15px;
+  padding: 28px 30px;
+  color: white;
+}
+
+/* Tarjetas */
+.ev-inicio-docente .ev-tarjeta-info {
+  min-height: 195px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ev-inicio-docente .ev-tarjeta-info button {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+/* Mantener coherencia visual con estudiante */
+.ev-sidebar-docente {
+  background: linear-gradient(180deg, #063b66, #002c51);
+}
+
+/* Ajustes para dispositivos móviles */
+@media (max-width: 800px) {
+  .ev-docente-panel {
+    margin: 65px 12px 20px !important;
+    width: calc(100% - 24px) !important;
+    max-width: none !important;
+    padding: 18px !important;
+  }
+
+  .ev-inicio-docente .ev-bienvenida {
+    padding: 20px;
+  }
+}
+
+/* ===== CORRECCIÓN DE ALINEACIÓN DEL CURSO DOCENTE ===== */
+
+/* Mantener curso y periodo en una misma fila */
+@media (min-width: 1100px) {
+
+  .ev-docente-panel .ev-docente-barra-curso {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+  }
+
+  /* Grupo izquierdo: curso y hemisemestre */
+  .ev-docente-panel .ev-docente-barra-curso > div:first-child {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* Grupo derecho: periodo para estudiantes */
+  .ev-docente-panel .ev-docente-barra-curso > div:last-child {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 6px !important;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .ev-docente-panel .ev-docente-barra-curso label {
+    white-space: nowrap;
+    font-size: 12px !important;
+  }
+
+  .ev-docente-panel .ev-docente-barra-curso .ev-docente-select {
+    width: 225px !important;
+    min-width: 0 !important;
+    flex-shrink: 1;
+  }
+
+  .ev-docente-panel .ev-docente-barra-curso button {
+    white-space: nowrap;
+  }
+}
+
+/* Pantallas medianas: permitir ajuste sin cortar elementos */
+@media (min-width: 801px) and (max-width: 1099px) {
+
+  .ev-docente-panel .ev-docente-barra-curso {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+}
+
+/* ===== FIN DE CORRECCIÓN ===== */
+
+
